@@ -424,3 +424,19 @@
 .calendar.right {
   display: none !important;
 }
+
+.date-time-modal-content {
+  position: fixed;
+  z-index: 1003;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.select-text {
+  text-align: center;
+  color: white;
+  font-size: 14px;
+  font-family: "Ford Antenna";
+  padding-top: 2px;
+  font-style: lighter; 
+}

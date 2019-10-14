@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export var LATLNG={
 
     lat: 32.3476183,
@@ -37,10 +39,13 @@ export var BORDER_COLOR_FOR_BARCHART = [
   '#676464', '#676464', '#676464', '#676464', '#676464', '#676464', '#676464', '#676464',
 ];
 
-export const findMinAndMax = (items, property, type) => {
+export const findMinAndMax = (items, property, type, range) => {
   let min = 0, max = 0;
   for (let i = 0; i < items.length; i++) {
     if (type !== items[i].properties.event_type) {
+      continue;
+    }
+    if (range && !isInRange(items[i].properties.period_start_time, range)) {
       continue;
     }
     const value = items[i].properties[property];
@@ -52,4 +57,14 @@ export const findMinAndMax = (items, property, type) => {
     }
   }
   return [min, max];
+}
+
+const isInRange = (date, range) => {
+  const startDate = new Date(`${range.startDate._d.getFullYear()}-${range.startDate._d.getMonth() + 1}-${range.startDate._d.getDate()}`);
+  const endDate = new Date(`${range.endDate._d.getFullYear()}-${range.endDate._d.getMonth() + 1}-${range.endDate._d.getDate()}`);
+  const idate = new Date(moment(date, "DD/MM/YYYY").format("MM-DD-YYYY"));
+  if (+idate >= +startDate && +idate <= +endDate) {
+    return true;
+  }
+  return false;
 }

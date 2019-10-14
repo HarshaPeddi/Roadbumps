@@ -6,7 +6,7 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import {latLongGeo} from '../../Helpers/convertcsv'
 import {findMinAndMax} from '../../Helpers/Constants'
-
+import DateAndTimePicker from '../sideBarComponent/dateTimePicker';
 
 const Range = Slider.Range;
 
@@ -25,6 +25,9 @@ export default class SideBar extends Component{
             },
             magValue: [0, 0],
             couValue: [0, 0],
+            dateTimePickerFlag: false,
+            range: null,
+            type: 'POTHOLE'
         }
         this.onChangeMagnitudeSlider = this.onChangeMagnitudeSlider.bind(this);
         this.onChangeCountSlider = this.onChangeCountSlider.bind(this);
@@ -36,8 +39,8 @@ export default class SideBar extends Component{
     }
 
     getMinMaxCount(type) {
-        const [magMin, magMax] = findMinAndMax(latLongGeo.features, 'magnitude', type.toUpperCase());
-        const [couMin, couMax] = findMinAndMax(latLongGeo.features, 'events_count', type.toUpperCase());
+        const [magMin, magMax] = findMinAndMax(latLongGeo.features, 'magnitude', type.toUpperCase(), this.state.range);
+        const [couMin, couMax] = findMinAndMax(latLongGeo.features, 'events_count', type.toUpperCase(), this.state.range);
         this.setState({
             mageRange: {
                 min: magMin,
@@ -48,7 +51,8 @@ export default class SideBar extends Component{
                 max: couMax
             },
             magValue: [magMin, magMax],
-            couValue: [couMin, couMax]
+            couValue: [couMin, couMax],
+            type
         });
     }
 
@@ -77,104 +81,119 @@ export default class SideBar extends Component{
                 radioButtonFlag:false
             });
         }else{
-        if (this.state.selecEventCloseOpen) {
-            this.setState({
-                radioButtonClicked:radioButtonName + " ",
-                radioButtonFlag:!this.state.radioButtonFlag
-            });
-        } else {
-            this.getMinMaxCount(radioButtonName);
-            this.setState({
-                radioButtonClicked:radioButtonName,
-                radioButtonFlag:!this.state.radioButtonFlag
-            });
+            if (this.state.selecEventCloseOpen) {
+                this.setState({
+                    radioButtonClicked:radioButtonName + " ",
+                    radioButtonFlag:!this.state.radioButtonFlag
+                });
+            } else {
+                this.getMinMaxCount(radioButtonName);
+                this.setState({
+                    radioButtonClicked:radioButtonName,
+                    radioButtonFlag:!this.state.radioButtonFlag
+                });
+            }
         }
     }
+
+    openCloseCalendarWindow =(range, applied)=>{
+        this.setState({
+            dateTimePickerFlag:!this.state.dateTimePickerFlag,
+            range: range ? range : this.state.range
+        }, () => {
+            if (applied) {
+                this.getMinMaxCount(this.state.type);
+            }
+        });
     }
 
-
-render() {
-const { mageRange: { min, max }, counRange } = this.state;
-return(
-<div className="side-bar-container">
-    <div className="imageBlock">
-        <div className="imagePlaceHolder">
-            <img className="ford-logo"  src ={FordLogo}></img>
-        </div>
-    </div>
-
-    <div className="TextBlock">
-        <p className="textArea">Citywide pothole and bumps road map</p>
-    </div>
-
-    <div className="radioSelectorBlock">
-        <div className="anamolyTextContainer">
-            <text>Anomaly :</text>
-        </div>
-        <div className="radioSelectorcontainer">
-            <div onClick={()=>{this.radioButtonController('Pothole')}} className="anamoly-sources hover-hand">
-                <div className="radio-button">
-                    <div className={['float-left',(this.state.radioButtonClicked==='Pothole')?'radio-selector-on':'radio-selector-off'].join(" ")}></div>
-                    <div className={['float-left',(this.state.radioButtonClicked==='Pothole')?'source-name-selected':'source-name-deselected'].join(" ")}>Pothole</div>
+    render() {
+        const { mageRange: { min, max }, counRange, range = {} } = this.state;
+        const { startDate = {}, endDate } = range || {};
+        const { _locale = {} } = startDate || {};
+        return(
+        <div className="side-bar-container">
+            <div className="imageBlock">
+                <div className="imagePlaceHolder">
+                    <img className="ford-logo"  src ={FordLogo}></img>
                 </div>
             </div>
-            <div onClick={()=>{this.radioButtonController('Bump')}} className="anamoly-sources hover-hand">
-                <div className="radio-button">
-                    <div className={['float-left',(this.state.radioButtonClicked==='Bump')?'radio-selector-on':'radio-selector-off'].join(" ")}></div>
-                    <div className={['float-left',(this.state.radioButtonClicked==='Bump')?'source-name-selected':'source-name-deselected'].join(" ")}>Bump</div>
+
+            <div className="TextBlock">
+                <p className="textArea">Citywide pothole and bumps road map</p>
+            </div>
+
+            <div className="radioSelectorBlock">
+                <div className="anamolyTextContainer">
+                    <text>Anomaly :</text>
+                </div>
+                <div className="radioSelectorcontainer">
+                    <div onClick={()=>{this.radioButtonController('Pothole')}} className="anamoly-sources hover-hand">
+                        <div className="radio-button">
+                            <div className={['float-left',(this.state.radioButtonClicked==='Pothole')?'radio-selector-on':'radio-selector-off'].join(" ")}></div>
+                            <div className={['float-left',(this.state.radioButtonClicked==='Pothole')?'source-name-selected':'source-name-deselected'].join(" ")}>Pothole</div>
+                        </div>
+                    </div>
+                    <div onClick={()=>{this.radioButtonController('Bump')}} className="anamoly-sources hover-hand">
+                        <div className="radio-button">
+                            <div className={['float-left',(this.state.radioButtonClicked==='Bump')?'radio-selector-on':'radio-selector-off'].join(" ")}></div>
+                            <div className={['float-left',(this.state.radioButtonClicked==='Bump')?'source-name-selected':'source-name-deselected'].join(" ")}>Bump</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <hr className="line"/>
-    <div className="magnitude-component">
-        <div className="MagnitudeTextContainer">
-            <text>Magnitude:</text>
-            <div className="scrollbar magnitude-scroll">
-                <Range allowCross={false} className="hover-hand" min={min} max={max} value={this.state.magValue} onChange={this.onChangeMagnitudeSlider} marks={{[min]: min, [max]: max}}/>
+            <hr className="line"/>
+            <div className="magnitude-component">
+                <div className="MagnitudeTextContainer">
+                    <text>Magnitude:</text>
+                    <div className="scrollbar magnitude-scroll">
+                        <Range allowCross={false} className="hover-hand" min={min} max={max} value={this.state.magValue} onChange={this.onChangeMagnitudeSlider} marks={{[min]: min, [max]: max}}/>
+                    </div>
+                    <div  className={this.state.radioButtonClicked === 'Bump' ? 'bump-image-container' : 'hidden'}/>
+                    <div  className={this.state.radioButtonClicked === 'Pothole' ? 'Pothole-image-container' : 'hidden'}/>
+                </div>
             </div>
-            <div  className={this.state.radioButtonClicked === 'Bump' ? 'bump-image-container' : 'hidden'}/>
-            <div  className={this.state.radioButtonClicked === 'Pothole' ? 'Pothole-image-container' : 'hidden'}/>
-        </div>
-    </div>
-    <hr className="line"/>
-    <div className="magnitude-component">
-        <div className="anamolyTextContainer">
-            <text>Count:</text>
-            <div className="scrollbar count-scroll">
-                <Range allowCross={false} className="hover-hand" min={counRange.min} max={counRange.max} value={this.state.couValue} onChange={this.onChangeCountSlider} marks={{[counRange.min]: counRange.min, [counRange.max]: counRange.max}}/>
-            </div>       
-        </div>
-    </div>
-    <hr className="line"/>
-    <div className="Date-picker-container">
-        <div className="anamolyTextContainer">
-            <text>Date:</text>
-        </div>
-
-        <Row className="date-time-text-container ">
-            <Col className="month-text float-left">Sept</Col>
-            <Col className="day-text float-left"> 01</Col>
-            <Col className="day-text float-left"> - </Col>
-
-            <Col className="month-text float-left">Jan</Col>
-            <Col className="day-text float-left">21</Col>
-            <Col className="day-text float-left"> , </Col>
-            <Col className="time-text float-left">2019</Col>
-
-            <div className="edit-icon float-left hover-hand" onClick={this.props.openCloseCalendarWindow}>
-                <img className="edit-icon-url" src={EditIcon}></img>                         
+            <hr className="line"/>
+            <div className="magnitude-component">
+                <div className="anamolyTextContainer">
+                    <text>Count:</text>
+                    <div className="scrollbar count-scroll">
+                        <Range allowCross={false} className="hover-hand" min={counRange.min} max={counRange.max} value={this.state.couValue} onChange={this.onChangeCountSlider} marks={{[counRange.min]: counRange.min, [counRange.max]: counRange.max}}/>
+                    </div>       
+                </div>
             </div>
-        </Row>
-    </div>
-    
-    <div className="anamoly-selecton-display-box">
-        <span className="anamoly-selecton-display-text">{this.state.radioButtonClicked}</span>
-    </div>
+            <hr className="line"/>
+            <div className="Date-picker-container">
+                <div className="anamolyTextContainer">
+                    <text>Date:</text>
+                </div>
 
-</div>
+                <Row className="date-time-text-container ">
+                    {range && startDate._d && <>
+                        <Col className="month-text float-left">{_locale._monthsShort[startDate._d.getMonth()]}</Col>
+                        <Col className="day-text float-left">{startDate._d.getDay()}</Col>
+                        <Col className="day-text float-left"> - </Col>
 
-)
-}
+                        <Col className="month-text float-left">{_locale._monthsShort[endDate._d.getMonth()]}</Col>
+                        <Col className="day-text float-left">{endDate._d.getMonth()}</Col>
+                        <Col className="day-text float-left"> , </Col>
+                        <Col className="time-text float-left">{endDate._d.getFullYear()}</Col>
+                    </>}
+                    {(!range || !startDate._d ) && <Col className="select-text">Select Date</Col>}
+
+                    <div className="edit-icon float-left hover-hand" onClick={this.openCloseCalendarWindow}>
+                        <img className="edit-icon-url" src={EditIcon}></img>                         
+                    </div>
+                </Row>
+            </div>
+            
+            <div className="anamoly-selecton-display-box">
+                <span className="anamoly-selecton-display-text">{this.state.radioButtonClicked}</span>
+            </div>
+            {this.state.dateTimePickerFlag && <DateAndTimePicker openCloseCalendarWindow={this.openCloseCalendarWindow}></DateAndTimePicker>}
+        </div>
+
+        )
+    }
 }
 

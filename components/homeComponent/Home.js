@@ -6,10 +6,6 @@ import 'leaflet/dist/leaflet.css';
 import { connect } from 'react-redux';
 import { saveDates, saveBarchartDATA, saveBackgroundColorForBarchart, saveBorderColorForBarchart } from '../../redux/actions/chartActions';
 import { DATES, DATA, BACKGROUND_COLOR_FOR_BARCHART, BORDER_COLOR_FOR_BARCHART } from "../../Helpers/Constants";
-import DateAndTimePicker from '../sideBarComponent/dateTimePicker'
-import {dateTimePickerFlag} from '../sideBarComponent/sideBar'
-
-
 
 export default class Home extends Component {
     constructor(props) {
@@ -23,8 +19,7 @@ export default class Home extends Component {
             horizontalBarWidth: 51,
             chartContentContainerWidth : 57,
             outerBarChartContainerWidth : 1028,
-            chartContainerRightPadding : "10%",
-            dateTimePickerFlag: false
+            chartContainerRightPadding : "10%"
         }
     }
 
@@ -65,17 +60,10 @@ export default class Home extends Component {
         } 
     }
 
-    openCloseCalendarWindow =()=>{
-        this.setState({
-            dateTimePickerFlag:!this.state.dateTimePickerFlag
-        });
-    }
-
     render() {
         return (
             <div >
-                <SideBar openCloseCalendarWindow={this.openCloseCalendarWindow}></SideBar>
-                        {this.state.dateTimePickerFlag && <DateAndTimePicker openCloseCalendarWindow={this.openCloseCalendarWindow}></DateAndTimePicker>}
+                <SideBar></SideBar>
                 <div className="map-container">
                     <MapLayer> </MapLayer>
                     <div className="bar-chart-container" style={{width: this.state.outerBarChartContainerWidth + "%", right: this.state.chartContainerRightPadding + "%"}}> 

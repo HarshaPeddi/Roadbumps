@@ -1,15 +1,8 @@
 import React, { Component } from 'react';
 import { Row } from 'react-bootstrap';
-//import 'react-date-range/dist/styles.css'; 
-//import 'react-date-range/dist/theme/default.css';
-import { Calendar } from 'react-calendar';
- import { DateRange } from 'react-date-range';
-
-//import { utills } from '../../Helpers/utills';
+import { DateRange } from 'react-date-range';
 import 'rc-time-picker/assets/index.css';
-import moment from 'moment';
 import { connect } from 'react-redux';
-import TimePicker from 'rc-time-picker';
 
 export default class DateAndTimePicker extends Component {
     constructor(props, context) {
@@ -24,19 +17,15 @@ export default class DateAndTimePicker extends Component {
         // const isToClosable = false;
         // const prevToValue = this.state.toTime
         // const prevFromValue = this.state.fromTime
+        this.handleRangeChange = this.handleRangeChange.bind(this);
     }
 
 
-    // handleRangeChange(which, payload) {
-    //     this.setState({
-    //         [which]: {
-    //             ...this.state[which],
-    //             ...payload,
-    //         },
-    //         fromTime: moment(payload.selection.startDate).hour(0).minute(0),
-    //         toTime: moment(payload.selection.endDate).hour(23).minute(59),
-    //     });
-    // }
+    handleRangeChange(range) {
+        this.setState({
+            range
+        });
+    }
 
     applyClick = () => {
         // this.state.dateRange.selection.startDate.setHours(moment(this.state.fromTime).hours(), moment(this.state.fromTime).minutes())
@@ -45,7 +34,7 @@ export default class DateAndTimePicker extends Component {
         // this.props.data.fromTime = this.state.fromTime;
         // this.props.data.toTime = this.state.toTime;
         // this.props.getSelectedDateAndTime(this.state);
-        this.props.openCloseCalendarWindow();
+        this.props.openCloseCalendarWindow(this.state.range, true);
     }
 
     cancelClick = () => {
@@ -174,7 +163,7 @@ export default class DateAndTimePicker extends Component {
                         <Row className="date-picker-container">
                             <DateRange
                                 className="date-picker-temp"
-                              //  onChange={this.handleRangeChange.bind(this, 'dateRange')}
+                                onChange={this.handleRangeChange}
                                 moveRangeOnFirstSelection={false}
                               //  ranges={[this.state.dateRange.selection]}
                                 maxDate={new Date()}
