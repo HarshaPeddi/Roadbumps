@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Row } from 'react-bootstrap';
 import { DateRange } from 'react-date-range';
 import 'rc-time-picker/assets/index.css';
+import { saveDisplayDate } from '../../redux/actions/selectedDataAction';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 export default class DateAndTimePicker extends Component {
     constructor(props, context) {
@@ -34,6 +36,10 @@ export default class DateAndTimePicker extends Component {
         // this.props.data.fromTime = this.state.fromTime;
         // this.props.data.toTime = this.state.toTime;
         // this.props.getSelectedDateAndTime(this.state);
+        this.props.dispatch(saveDisplayDate([
+            moment(this.state.range.startDate._d).format('MMM DD, YYYY'), 
+            moment(this.state.range.endDate._d).format('MMM DD, YYYY')
+        ]));
         this.props.openCloseCalendarWindow(this.state.range, true);
     }
 
