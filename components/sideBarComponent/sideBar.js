@@ -96,10 +96,10 @@ export default class SideBar extends Component{
         }
     }
 
-    openCloseCalendarWindow =(range, applied)=>{
+    openCloseCalendarWindow = (range, applied)=>{
         this.setState({
             dateTimePickerFlag:!this.state.dateTimePickerFlag,
-            range: range ? range : this.state.range
+            range: applied ? range : this.state.range
         }, () => {
             if (applied) {
                 this.getMinMaxCount(this.state.type);
@@ -171,11 +171,11 @@ export default class SideBar extends Component{
                 <Row className="date-time-text-container ">
                     {range && startDate._d && <>
                         <Col className="month-text float-left">{_locale._monthsShort[startDate._d.getMonth()]}</Col>
-                        <Col className="day-text float-left">{startDate._d.getDay()}</Col>
+                        <Col className="day-text float-left">{startDate._d.getDate()}</Col>
                         <Col className="day-text float-left"> - </Col>
 
                         <Col className="month-text float-left">{_locale._monthsShort[endDate._d.getMonth()]}</Col>
-                        <Col className="day-text float-left">{endDate._d.getMonth()}</Col>
+                        <Col className="day-text float-left">{endDate._d.getDate()}</Col>
                         <Col className="day-text float-left"> , </Col>
                         <Col className="time-text float-left">{endDate._d.getFullYear()}</Col>
                     </>}
