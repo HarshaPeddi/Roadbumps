@@ -30,16 +30,6 @@ export default class DateAndTimePicker extends Component {
     }
 
     applyClick = () => {
-        // this.state.dateRange.selection.startDate.setHours(moment(this.state.fromTime).hours(), moment(this.state.fromTime).minutes())
-        // this.state.dateRange.selection.endDate.setHours(moment(this.state.toTime).hours(), moment(this.state.toTime).minutes())
-        // this.props.data.dateRange = this.state.dateRange;
-        // this.props.data.fromTime = this.state.fromTime;
-        // this.props.data.toTime = this.state.toTime;
-        // this.props.getSelectedDateAndTime(this.state);
-        this.props.dispatch(saveDisplayDate([
-            moment(this.state.range.startDate._d).format('MMM DD, YYYY'), 
-            moment(this.state.range.endDate._d).format('MMM DD, YYYY')
-        ]));
         this.props.openCloseCalendarWindow(this.state.range, true);
     }
 
