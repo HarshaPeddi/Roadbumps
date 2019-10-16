@@ -68,3 +68,13 @@ const isInRange = (date, range) => {
   }
   return false;
 }
+
+export const getDates = (startDate, endDate) => {
+  var now = startDate, dates = [];
+  
+  while (now.isSameOrBefore(endDate, 'date')) {
+    dates.push(now.format('MMMM DD, YYYY'));
+    now.add(1, 'days');
+  }
+  return dates;
+};

@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import {Grid, Row, Col} from 'react-bootstrap';
+import { connect } from 'react-redux';
 import FordLogo from '../../Images/FordOval_Blue_RGB_v1.svg';
 import EditIcon from '../../Images/EditIcon.svg';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import {latLongGeo} from '../../Helpers/convertcsv'
-import {findMinAndMax} from '../../Helpers/Constants'
+import {findMinAndMax, getDates} from '../../Helpers/Constants'
 import DateAndTimePicker from '../sideBarComponent/dateTimePicker';
+import { saveDates } from '../../redux/actions/chartActions';
 
 const Range = Slider.Range;
 
-export default class SideBar extends Component{
+class SideBar extends Component{
     constructor(props){
         super(props);
         this.state = {
@@ -103,6 +105,7 @@ export default class SideBar extends Component{
         }, () => {
             if (applied) {
                 this.getMinMaxCount(this.state.type);
+                this.props.dispatch(saveDates(getDates(range.startDate, range.endDate)));
             }
         });
     }
@@ -196,4 +199,6 @@ export default class SideBar extends Component{
         )
     }
 }
+
+export default connect()(SideBar);
 

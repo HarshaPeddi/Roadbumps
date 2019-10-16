@@ -32,6 +32,12 @@ export default class Chart extends Component {
         }
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.chartData !== this.props.chartData) {
+            this.setState({ chartData: { ...this.state.chartData, labels: this.props.chartData.datesArray} });
+        }
+    }
+
     resizeChartAndContainer = () => {
         var height = 40
         var width = (this.state.chartData.labels.length * 17)
@@ -115,7 +121,7 @@ export default class Chart extends Component {
 
 const mapStateToProps = state => {
     return {
-        chartData:state.chartData
+        chartData: state.chartData
     };
 };
 Chart= connect(mapStateToProps,null)(Chart);
