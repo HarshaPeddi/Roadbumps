@@ -5,6 +5,7 @@ import Chart from '../barChartComponent/BarChart';
 import 'leaflet/dist/leaflet.css';
 import { connect } from 'react-redux';
 import { saveDates, saveBarchartDATA, saveBackgroundColorForBarchart, saveBorderColorForBarchart } from '../../redux/actions/chartActions';
+import { saveDisplayDate } from '../../redux/actions/selectedDataAction';
 import { DATES, DATA, BACKGROUND_COLOR_FOR_BARCHART, BORDER_COLOR_FOR_BARCHART } from "../../Helpers/Constants";
 
 export default class Home extends Component {
@@ -24,9 +25,9 @@ export default class Home extends Component {
     }
 
     resizeContainersAndBar = () => {
-        var outerContainerWidth = 10.757 + (this.state.dates.length * 1.081)
-        var barContentContainerWidth = 44 + (this.state.dates.length * 1.081)    
-        var barWidth = 54 + (this.state.dates.length * 1.081)    
+        var outerContainerWidth = 10.757 + (this.state.dates.length * 1.081) > 100 ? 100 : (10.757 + (this.state.dates.length * 1.081));  
+        var barContentContainerWidth = 44 + (this.state.dates.length * 1.081) > 100 ? 100 : ( 44 + (this.state.dates.length * 1.081));
+        var barWidth = 54 + (this.state.dates.length * 1.081) > 100 ? 100 : (54 + (this.state.dates.length * 1.081));
 
         this.setState({
             outerBarChartContainerWidth : outerContainerWidth,
@@ -36,10 +37,10 @@ export default class Home extends Component {
     }
 
     setRightPadding = () => {
-        var rightPadding = 42.459458 - (this.state.dates.length * 0.486486)
+        var rightPadding = 42.459458 - (this.state.dates.length * 0.486486);
 
         this.setState({
-            chartContainerRightPadding : rightPadding
+            chartContainerRightPadding : rightPadding < 0 ? 0 : rightPadding
         });
     }
 
@@ -58,6 +59,22 @@ export default class Home extends Component {
                 selectedDate : nextProps.selectedDate
             });
         } 
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.chartData !== this.props.chartData) {
+            this.setState({ 
+                dates: this.props.chartData.datesArray
+            }, () => {
+                this.resizeContainersAndBar();
+                this.setRightPadding();
+                this.props.dispatch(saveDisplayDate(this.state.dates[0]));
+            });
+        }
+    }
+
+    componentDidMount() {
+        this.props.dispatch(saveDisplayDate(this.state.dates[0]));
     }
 
     render() {
@@ -87,7 +104,8 @@ export default class Home extends Component {
 
 const mapStateToProps = state => {
     return {
-        selectedDate: state.selectedDate
+        selectedDate: state.selectedDate,
+        chartData: state.chartData
     };
 };
 Home= connect(mapStateToProps,null)(Home);

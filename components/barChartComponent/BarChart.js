@@ -9,7 +9,7 @@ export default class Chart extends Component {
         super(props);
         this.state = {
             chartHeight: 30,
-            chartWidth: 57,
+            chartWidth: '100%',
             chartBarThickness: 2,
             chartContainerWidth : 57,
             chartData: {
@@ -25,7 +25,7 @@ export default class Chart extends Component {
                             right: 1,
                             bottom: 1,
                             left: 1
-                        },
+                        }
                     }
                 ]
             }
@@ -34,8 +34,27 @@ export default class Chart extends Component {
 
     componentDidUpdate(prevProps) {
         if (prevProps.chartData !== this.props.chartData) {
-            this.setState({ chartData: { ...this.state.chartData, labels: this.props.chartData.datesArray} });
+            const updateSet = {
+                data: [...Array(this.props.chartData.datesArray.length)].fill(2.5),
+                backgroundColor: [...Array(this.props.chartData.datesArray.length)].fill('#4A4A4A'),
+                borderColor: [...Array(this.props.chartData.datesArray.length)].fill('#676464'),
+            }
+            this.setState({ chartData: { ...this.state.chartData, labels: this.props.chartData.datesArray, datasets: [ { ...this.state.chartData.datasets[0], ...updateSet } ] } }, () => {
+                this.resizeChartAndContainer();
+                this.highLightBar();
+            });
         }
+    }
+
+    highLightBar() {
+        var backgroundColorArray = this.state.chartData.datasets[0].backgroundColor
+        var borderColorArray = this.state.chartData.datasets[0].borderColor
+        backgroundColorArray[0] = '#50E3C2';
+        borderColorArray[0] = '#4A6B7E';
+        this.setState({
+            backgroundColor: backgroundColorArray,
+            borderColor: borderColorArray,
+        });
     }
 
     resizeChartAndContainer = () => {
@@ -54,6 +73,10 @@ export default class Chart extends Component {
 
     componentWillMount() {
         this.resizeChartAndContainer()
+    }
+
+    componentDidMount() {
+        this.highLightBar();
     }
 
     updateColorAndDateDisplay = (item) => {
@@ -84,7 +107,7 @@ export default class Chart extends Component {
 
     render() {
         return (
-            <div className="chart" style={{width: this.state.chartContainerWidth + "%"}}>
+            <div className="chart" style={{width: "100%"}}>
                 <Bar
                     data={this.state.chartData}
                     width={this.state.chartWidth}
