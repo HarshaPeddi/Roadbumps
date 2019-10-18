@@ -40,7 +40,7 @@ class SideBar extends Component{
         this.getMinMaxCount('POTHOLE');
     }
 
-    getMinMaxCount(type) {
+    getMinMaxCount(type) {        
         const [magMin, magMax] = findMinAndMax(latLongGeo.features, 'magnitude', type.toUpperCase(), this.state.range);
         const [couMin, couMax] = findMinAndMax(latLongGeo.features, 'events_count', type.toUpperCase(), this.state.range);
         this.setState({
@@ -105,7 +105,7 @@ class SideBar extends Component{
         }, () => {
             if (applied) {
                 this.getMinMaxCount(this.state.type);
-                this.props.dispatch(saveDates(getDates(range.startDate, range.endDate)));
+                this.props.dispatch(saveDates(getDates(range.startDate.clone(), range.endDate.clone())));
             }
         });
     }
